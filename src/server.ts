@@ -9,6 +9,8 @@ connectDB()
 
 const app = express()
 
+app.use(express.json()) // Middleware para parsear el body de las peticiones
+
 // Routes
 app.use('/api/projects', projectRoutes)
 
