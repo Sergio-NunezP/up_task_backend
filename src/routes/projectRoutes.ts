@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import { ProjectController } from '../controllers/ProjectController';
-import { handleInputError } from '../middleware/validation';
+import { handleInputErrors } from '../middleware/validation';
 
 const router = Router();
 
@@ -13,9 +13,19 @@ router.post('/',
         .notEmpty().withMessage('El Nombre del Cliente es obligatorio'),
     body('description')
         .notEmpty().withMessage('La description del proyecto es obligatorio'),
-    handleInputError,
+    handleInputErrors,
     ProjectController.createProject);
 
 // Obtener todos los proyectos : GET /api/projects
 router.get('/', ProjectController.getAllProjects);
+
+// Obtener un proyecto por id: GET /api/projects/:id
+router.get('/:id',
+    param('id').isMongoId().withMessage('El ID no es valido'),
+    handleInputErrors,
+    ProjectController.getProjectByID
+);
+
+
+
 export default router;
