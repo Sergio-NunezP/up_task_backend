@@ -24,5 +24,5 @@ const ProjectSchema: Schema = new Schema({
     }
 })
 
-const Project = moongose.model<ProjectType>('Project', ProjectSchema);
+const Project = moongose.model<ProjectType>('Project', ProjectSchema, 'projects');
 export default Project;

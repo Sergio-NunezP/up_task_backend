@@ -26,6 +26,19 @@ router.get('/:id',
     ProjectController.getProjectByID
 );
 
+// Actualizar un proyecto por id: PUT /api/projects/:id
+router.put('/:id',
+    param('id').isMongoId().withMessage('El ID no es valido'),
+    body('projectName')
+        .notEmpty().withMessage('El Nombre del proyecto es obligatorio'),
+    body('clientName')
+        .notEmpty().withMessage('El Nombre del Cliente es obligatorio'),
+    body('description')
+        .notEmpty().withMessage('La description del proyecto es obligatorio'),
+    handleInputErrors,
+    ProjectController.updateProject
+);
+
 
 
 export default router;

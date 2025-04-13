@@ -36,7 +36,23 @@ export class ProjectController {
             res.json(project)
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: 'Error al obtener el proyecto' })
+        }
+    }
+
+    // Actualizar un proyecto por id: PUT
+    static updateProject = async (req: Request, res: Response) => {
+        const { id } = req.params
+        try {
+            const project = await Project.findByIdAndUpdate(id, req.body)
+
+            if (!project) {
+                const error = new Error('Proyecto no encontrado')
+                res.status(404).json({ error: error.message })
+            }
+            await project.save()
+            res.send('Proyecto actualizado correctamente')
+        } catch (error) {
+            console.error(error)
         }
     }
 }
