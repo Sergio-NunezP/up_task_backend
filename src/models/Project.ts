@@ -30,7 +30,7 @@ const ProjectSchema: Schema = new Schema({
             ref: 'Task'
         }
     ]
-})
+}, { timestamps: true });
 
 const Project = moongose.model<IProject>('Project', ProjectSchema, 'projects');
 export default Project;
