@@ -1,12 +1,16 @@
 import type { Request, Response } from "express";
+import Task from "../models/Task";
 
 export class TaskController {
     static createProject = async (req: Request, res: Response) => {
 
-        const { projectId } = req.params;
-        console.log(projectId);
         try {
-
+            const task = new Task(req.body);
+            task.project = req.project.id;
+            req.project.tasks.push(task.id);
+            await task.save();
+            await req.project.save();
+            res.send('Tarea creada correctamente');
         } catch (error) {
             console.error(error);
         }
