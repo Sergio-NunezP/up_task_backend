@@ -62,6 +62,11 @@ router.post('/:projectId/tasks',
     handleInputErrors,
     TaskController.createProject
 )
+// Obtener todas las tareas de un proyecto : GET /api/projects/:id/tasks
+router.get('/:projectId/tasks',
+    validateProjectExist,
+    TaskController.getProjectTasks
+)
 
 
 export default router;
