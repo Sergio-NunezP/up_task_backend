@@ -68,5 +68,11 @@ router.get('/:projectId/tasks',
     TaskController.getProjectTasks
 )
 
+// Obtener una tarea por id : GET /api/:projectId/tasks/:taskId
+router.get('/:projectId/tasks/:taskId',
+    validateProjectExist,
+    TaskController.getTaskById
+)
+
 
 export default router;
