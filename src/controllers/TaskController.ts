@@ -22,7 +22,7 @@ export class TaskController {
     // Obtener todas las tareas de un proyecto : GET /api/projects/:id/tasks
     static getProjectTasks = async (req: Request, res: Response) => {
         try {
-            const tasks = await Task.find({ project: req.project.id });
+            const tasks = await Task.find({ project: req.project.id }).populate("project");
             res.json(tasks);
         } catch (error) {
             console.error(error);
