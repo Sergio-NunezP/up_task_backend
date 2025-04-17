@@ -52,9 +52,10 @@ router.delete('/:id',
 
 */
 
+router.param('projectId', validateProjectExist)
+
 // Crear una tarea : POST /api/projects/:id/tasks
 router.post('/:projectId/tasks',
-    validateProjectExist,
     body('name')
         .notEmpty().withMessage('El Nombre de la tarea es obligatorio'),
     body('description')
@@ -64,13 +65,13 @@ router.post('/:projectId/tasks',
 )
 // Obtener todas las tareas de un proyecto : GET /api/projects/:id/tasks
 router.get('/:projectId/tasks',
-    validateProjectExist,
     TaskController.getProjectTasks
 )
 
 // Obtener una tarea por id : GET /api/:projectId/tasks/:taskId
 router.get('/:projectId/tasks/:taskId',
-    validateProjectExist,
+    param('taskId').isMongoId().withMessage('El ID no es valido'),
+    handleInputErrors,
     TaskController.getTaskById
 )
 
