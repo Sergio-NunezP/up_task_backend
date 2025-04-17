@@ -52,15 +52,39 @@ export class TaskController {
     // Actualizar una tarea por id : PUT /api/:projectId/tasks/:taskId
     static updateTask = async (req: Request, res: Response) => {
         try {
-            const project = req.project //  desde el req desde el middleware project
             const { taskId } = req.params
-            const task = await Task.findOne({ _id: taskId, project: project.id }).exec();
+            const task = await Task.findById(taskId);
             if (!task) {
-                res.status(404).json({ error: 'Hubo un error y no se encuentra' })
+                const error = new Error('No se encontro la tarea');
+                res.status(404).json({ error: error.message });
                 return
             }
-            await task.updateOne(req.body)
-            res.json({ msg: 'Se ha actualizado' })
+            if (task.project.toString() !== req.project.id) {
+                const error = new Error('Acción no permitida, la tarea no pertenece al proyecto');
+                res.status(400).json({ error: error.message });
+            }
+
+            task.name = req.body.name
+            task.description = req.body.description
+            await task.save()
+            res.send('Tarea actualizada correctamente');
+        } catch (error) {
+            res.status(500).json({ error: 'Error al obtener la tarea' });
+        }
+    }
+    // Eliminar una tarea por id : DELETE /api/:projectId/tasks/:taskId
+    static deleteTask = async (req: Request, res: Response) => {
+        try {
+            const { taskId } = req.params
+            const task = await Task.findById(taskId);
+            if (!task) {
+                const error = new Error('No se encontro la tarea');
+                res.status(404).json({ error: error.message });
+                return
+            }
+            req.project.tasks = req.project.tasks.filter(task => task.toString() !== taskId)
+            await Promise.allSettled([task.deleteOne(), req.project.save()])
+            res.send('Tarea eliminada correctamente');
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener la tarea' });
         }
