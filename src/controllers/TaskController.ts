@@ -48,4 +48,21 @@ export class TaskController {
             res.status(500).json({ error: 'Error al obtener la tarea' });
         }
     }
+
+    // Actualizar una tarea por id : PUT /api/:projectId/tasks/:taskId
+    static updateTask = async (req: Request, res: Response) => {
+        try {
+            const project = req.project //  desde el req desde el middleware project
+            const { taskId } = req.params
+            const task = await Task.findOne({ _id: taskId, project: project.id }).exec();
+            if (!task) {
+                res.status(404).json({ error: 'Hubo un error y no se encuentra' })
+                return
+            }
+            await task.updateOne(req.body)
+            res.json({ msg: 'Se ha actualizado' })
+        } catch (error) {
+            res.status(500).json({ error: 'Error al obtener la tarea' });
+        }
+    }
 }

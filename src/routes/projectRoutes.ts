@@ -48,6 +48,7 @@ router.delete('/:id',
     ProjectController.deleteProject
 );
 
+
 /** Routes para las tareas (tasks) 
 
 */
@@ -73,6 +74,16 @@ router.get('/:projectId/tasks/:taskId',
     param('taskId').isMongoId().withMessage('El ID no es valido'),
     handleInputErrors,
     TaskController.getTaskById
+)
+// Actualizar una tarea por id : PUT /api/:projectId/tasks/:taskId
+router.put('/:projectId/tasks/:taskId',
+    param('taskId').isMongoId().withMessage('El ID no es valido'),
+    body('name')
+        .notEmpty().withMessage('El Nombre de la tarea es obligatorio'),
+    body('description')
+        .notEmpty().withMessage('La description de la tarea es obligatoria'),
+    handleInputErrors,
+    TaskController.updateTask
 )
 
 
