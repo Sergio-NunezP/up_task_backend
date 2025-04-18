@@ -89,4 +89,25 @@ export class TaskController {
             res.status(500).json({ error: 'Error al obtener la tarea' });
         }
     }
-}
+
+    // Actualizar el estado de una tarea por id : POST /api/:projectId/tasks/:taskId/status
+    static updateStatus = async (req: Request, res: Response) => {
+        try {
+            const { taskId } = req.params
+            const task = await Task.findById(taskId);
+            if (!task) {
+                const error = new Error('No se encontro la tarea');
+                res.status(404).json({ error: error.message });
+                return
+            }
+            const { status } = req.body
+            task.status = status
+            await task.save()
+            res.send('Estado de la tarea actualizado correctamente');
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ error: 'Error al obtener la tarea' });
+        }
+    }
+}  
