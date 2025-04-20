@@ -32,18 +32,11 @@ export class TaskController {
     // Obtener una tarea por id : GET /api/:projectId/tasks/:taskId
     static getTaskById = async (req: Request, res: Response) => {
         try {
-            const { taskId } = req.params
-            const task = await Task.findById(taskId);
-            if (!task) {
-                const error = new Error('No se encontro la tarea');
-                res.status(404).json({ error: error.message });
-                return
-            }
-            if (task.project.toString() !== req.project.id) {
+            if (req.task.project.toString() !== req.project.id) {
                 const error = new Error('Acción no permitida, la tarea no pertenece al proyecto');
                 res.status(400).json({ error: error.message });
             }
-            res.json(task);
+            res.json(req.task);
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener la tarea' });
         }
@@ -52,21 +45,14 @@ export class TaskController {
     // Actualizar una tarea por id : PUT /api/:projectId/tasks/:taskId
     static updateTask = async (req: Request, res: Response) => {
         try {
-            const { taskId } = req.params
-            const task = await Task.findById(taskId);
-            if (!task) {
-                const error = new Error('No se encontro la tarea');
-                res.status(404).json({ error: error.message });
-                return
-            }
-            if (task.project.toString() !== req.project.id) {
+            if (req.task.project.toString() !== req.project.id) {
                 const error = new Error('Acción no permitida, la tarea no pertenece al proyecto');
                 res.status(400).json({ error: error.message });
             }
 
-            task.name = req.body.name
-            task.description = req.body.description
-            await task.save()
+            req.task.name = req.body.name
+            req.task.description = req.body.description
+            await req.task.save()
             res.send('Tarea actualizada correctamente');
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener la tarea' });
@@ -75,15 +61,8 @@ export class TaskController {
     // Eliminar una tarea por id : DELETE /api/:projectId/tasks/:taskId
     static deleteTask = async (req: Request, res: Response) => {
         try {
-            const { taskId } = req.params
-            const task = await Task.findById(taskId);
-            if (!task) {
-                const error = new Error('No se encontro la tarea');
-                res.status(404).json({ error: error.message });
-                return
-            }
-            req.project.tasks = req.project.tasks.filter(task => task.toString() !== taskId)
-            await Promise.allSettled([task.deleteOne(), req.project.save()])
+            req.project.tasks = req.project.tasks.filter(task => task.toString() !== req.task.id.toString())
+            await Promise.allSettled([req.task.deleteOne(), req.project.save()])
             res.send('Tarea eliminada correctamente');
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener la tarea' });
@@ -93,16 +72,9 @@ export class TaskController {
     // Actualizar el estado de una tarea por id : POST /api/:projectId/tasks/:taskId/status
     static updateStatus = async (req: Request, res: Response) => {
         try {
-            const { taskId } = req.params
-            const task = await Task.findById(taskId);
-            if (!task) {
-                const error = new Error('No se encontro la tarea');
-                res.status(404).json({ error: error.message });
-                return
-            }
             const { status } = req.body
-            task.status = status
-            await task.save()
+            req.task.status = status
+            await req.task.save()
             res.send('Estado de la tarea actualizado correctamente');
 
         } catch (error) {
