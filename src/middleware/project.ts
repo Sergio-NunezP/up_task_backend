@@ -9,6 +9,7 @@ declare global {
     }
 }
 
+// Middleware para verificar si el proyecto existe
 export async function projectExist(req: Request, res: Response, next: NextFunction) {
     try {
         const { projectId } = req.params;

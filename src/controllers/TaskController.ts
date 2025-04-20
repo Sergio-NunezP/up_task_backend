@@ -32,10 +32,6 @@ export class TaskController {
     // Obtener una tarea por id : GET /api/:projectId/tasks/:taskId
     static getTaskById = async (req: Request, res: Response) => {
         try {
-            if (req.task.project.toString() !== req.project.id) {
-                const error = new Error('Acción no permitida, la tarea no pertenece al proyecto');
-                res.status(400).json({ error: error.message });
-            }
             res.json(req.task);
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener la tarea' });
@@ -45,11 +41,6 @@ export class TaskController {
     // Actualizar una tarea por id : PUT /api/:projectId/tasks/:taskId
     static updateTask = async (req: Request, res: Response) => {
         try {
-            if (req.task.project.toString() !== req.project.id) {
-                const error = new Error('Acción no permitida, la tarea no pertenece al proyecto');
-                res.status(400).json({ error: error.message });
-            }
-
             req.task.name = req.body.name
             req.task.description = req.body.description
             await req.task.save()

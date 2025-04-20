@@ -9,6 +9,7 @@ declare global {
     }
 }
 
+// Middleware para verificar si la tarea existe
 export async function taskExist(req: Request, res: Response, next: NextFunction) {
     try {
         const { taskId } = req.params;
@@ -16,10 +17,21 @@ export async function taskExist(req: Request, res: Response, next: NextFunction)
         if (!task) {
             const error = new Error('Tarea no encontrada')
             res.status(404).json({ message: error.message })
+            return
         }
         req.task = task
         next()
     } catch (error) {
         res.status(500).json({ message: 'Hubo un error' })
     }
+}
+
+// Middleware para verificar si la tarea pertenece al proyecto
+export function taskBelongToProject(req: Request, res: Response, next: NextFunction) {
+    if (req.task.project.toString() !== req.project.id.toString()) {
+        const error = new Error('Acción no permitida, la tarea no pertenece al proyecto');
+        res.status(400).json({ error: error.message });
+        return
+    }
+    next()
 }
